@@ -1,12 +1,123 @@
+
 <!DOCTYPE html>
-<html>
+<html lang="hi">
 <head>
+  <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>CHUDI_SHOP OTP Login</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #800020;
+      color: white;
+      text-align: center;
+      padding: 24px 12px;
+    }
+    .card {
+      background: white;
+      color: #800020;
+      max-width: 360px;
+      margin: 30px auto;
+      padding: 22px;
+      border-radius: 14px;
+    }
+    input, button {
+      box-sizing: border-box;
+      width: 100%;
+      padding: 13px;
+      margin: 9px 0;
+      font-size: 16px;
+      border-radius: 7px;
+    }
+    input { border: 1px solid #aaa; }
+    button {
+      background: #d4af37;
+      color: #4b0014;
+      border: 0;
+      font-weight: bold;
+    }
+    #message { overflow-wrap: anywhere; }
+  </style>
 </head>
 <body>
   <h2>CHUDI_SHOP</h2>
-  <p>OTP Login Setup</p>
-  <p>Firebase connection pending</p>
+  <p>हर चूड़ी में हो खुशियों का रंग</p>
+
+  <div class="card">
+    <h3>मोबाइल OTP Login</h3>
+    <input id="phone" type="tel" placeholder="+91 के साथ मोबाइल नंबर">
+    <div id="recaptcha-container"></div>
+    <button id="sendOtp">OTP भेजें</button>
+
+    <input id="otp" type="text" inputmode="numeric"
+      placeholder="SMS में आया OTP डालें">
+    <button id="verifyOtp">OTP Verify करें</button>
+    <p id="message">पहले मोबाइल नंबर डालें।</p>
+  </div>
+
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+  <script>
+    // यहाँ अपने Firebase Config के सही मान भरें।
+    const firebaseConfig = {
+      apiKey: "AIzaSyCAriKxp6lKRJijQQ8-9syLXMiSZaPUfUc",
+      authDomain: "chudisho.firebaseapp.com",
+      projectId: "chudisho",
+      messagingSenderId: "659362680944",
+      appId: "1:659362680944:web:36bc979e552043e4ba24b5"
+     
+   };
+
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+    let confirmationResult;
+
+    const message = document.getElementById("message");
+    function show(text) { message.textContent = text; }
+
+    window.recaptchaVerifier = new firebase.auth.RecaptchaVerifier(
+      "recaptcha-container",
+      { size: "normal" }
+    );
+
+    window.recaptchaVerifier.render().catch(function(error) {
+      show("reCAPTCHA नहीं खुला: " + error.message);
+    });
+
+    document.getElementById("sendOtp").onclick = async function() {
+      const phone = document.getElementById("phone").value.trim();
+      if (!/^\+[1-9]\d{7,14}$/.test(phone)) {
+        show("नंबर +91XXXXXXXXXX के रूप में डालें।");
+        return;
+      }
+      try {
+        confirmationResult = await auth.signInWithPhoneNumber(
+          phone, window.recaptchaVerifier
+        );
+        show("OTP भेज दिया गया है। SMS देखें।");
+      } catch (error) {
+        show("OTP नहीं भेजा गया: " + error.message);
+      }
+    };
+
+    document.getElementById("verifyOtp").onclick = async function() {
+      const code = document.getElementById("otp").value.trim();
+      if (!confirmationResult) {
+        show("पहले OTP भेजें।");
+        return;
+      }
+      if (!/^\d{6}$/.test(code)) {
+        show("6 अंकों का OTP डालें।");
+        return;
+      }
+      try {
+        await confirmationResult.confirm(code);
+        show("लॉगिन सफल! आपका मोबाइल नंबर सत्यापित है।");
+      } catch (error) {
+        show("OTP सत्यापित नहीं हुआ: " + error.message);
+      }
+    };
+  </script>
 </body>
-    </html>
+</html>
+
