@@ -42,6 +42,7 @@ const firebaseConfig = {
 
 const message = document.getElementById("message");
 firebase.initializeApp(firebaseConfig);
+  message.textContent = "Firebase शुरू हो गया। अब बटन दबाएँ।";
 const auth = firebase.auth();
 
 function values(){
