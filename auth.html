@@ -1,116 +1,229 @@
-
 <!DOCTYPE html>
 <html lang="hi">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>CHUDI_SHOP Login</title>
+
 <style>
-body{margin:0;background:#fff7f0;font-family:Arial,sans-serif}
-.card{max-width:360px;margin:45px auto;padding:24px;background:#fff;border-radius:16px;box-shadow:0 3px 15px #d9b6a0}
-h1{text-align:center;color:#800020}
-p{text-align:center;color:#805040}
-input{box-sizing:border-box;width:100%;padding:13px;margin:8px 0;border:1px solid #c9a06a;border-radius:8px;font-size:16px}
-button{width:100%;padding:13px;margin-top:10px;border:0;border-radius:8px;background:#800020;color:#fff;font-size:16px}
-.secondary{background:#b58a35;color:#fff}
-#message{overflow-wrap:anywhere;font-size:14px}
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  padding: 20px;
+  background: #800020;
+  font-family: Arial, sans-serif;
+}
+
+.card {
+  max-width: 420px;
+  margin: 20px auto;
+  padding: 24px;
+  background: #fff7f0;
+  border-radius: 16px;
+}
+
+h1 {
+  text-align: center;
+  color: #800020;
+}
+
+p {
+  text-align: center;
+  color: #805040;
+}
+
+input {
+  display: block;
+  width: 100%;
+  padding: 14px;
+  margin: 12px 0;
+  border: 1px solid #c9a06a;
+  border-radius: 8px;
+  font-size: 16px;
+}
+
+button {
+  width: 100%;
+  padding: 13px;
+  margin-top: 10px;
+  border: 0;
+  border-radius: 8px;
+  background: #800020;
+  color: white;
+  font-size: 16px;
+}
+
+.secondary {
+  background: #b58350;
+}
+
+#message {
+  overflow-wrap: anywhere;
+  font-size: 14px;
+  font-weight: bold;
+}
 </style>
 </head>
+
 <body>
 <div class="card">
-<h1>CHUDI_SHOP</h1>
-<p>हर चूड़ी में हो खुशियों का रंग</p>
-<input id="email" type="email" placeholder="Email address">
-<input id="password" type="password" placeholder="Shop password">
-<button id="login">Login</button>
-<button id="register" class="secondary">नया Account बनाएँ</button>
-<button id="reset">पासवर्ड भूल गए?</button>
-<button id="logout" style="display:none">Logout</button>
-<p id="message">Login करने या नया account बनाने के लिए जानकारी भरें।</p>
+  <h1>✨ CHUDI_SHOP ✨</h1>
+  <p>अपनी चूड़ियों की दुकान में आपका स्वागत है</p>
+
+  <input id="email" type="email"
+         placeholder="अपना Email address डालें">
+
+  <input id="password" type="password"
+         placeholder="अपना Password डालें">
+
+  <button id="login">Login</button>
+  <button id="register" class="secondary">नया Account बनाएँ</button>
+  <button id="reset" class="secondary">Password भूल गए?</button>
+  <button id="logout" class="secondary" style="display:none">
+    Logout
+  </button>
+
+  <p id="message" role="status">Email और Password भरें।</p>
 </div>
 
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+
 <script>
-const firebaseConfig = {
-  apiKey: "AIzaSyCAriKxp6lKRJijQQ8-9syLXMiSZaPUfUc",
+const firebaseConfi",= {
+  apiKey:AIzaSyCAriKxp6lKRJijQQ8-9syLXMiSZaPUfUc"
   authDomain: "chudisho.firebaseapp.com",
   projectId: "chudisho",
   messagingSenderId: "659362680944",
-  "1:659362680944:web:36bc979e552043e4ba24b5"
+  appId: "1:659362680944:web:36bc979e552043e4ba24b5"
 };
 
 const message = document.getElementById("message");
-firebase.initializeApp(firebaseConfig);
-  message.textContent = "Firebase शुरू हो गया। अब बटन दबाएँ।";
-const auth = firebase.auth();
+const loginButton = document.getElementById("login");
+const registerButton = document.getElementById("register");
+const resetButton = document.getElementById("reset");
+const logoutButton = document.getElementById("logout");
 
-function values(){
+let auth;
+
+try {
+  firebase.initializeApp(firebaseConfig);
+  auth = firebase.auth();
+  message.textContent = "Firebase तैयार है। Email और Password भरें।";
+} catch (error) {
+  message.textContent = "Firebase सेटिंग जाँचें: " + error.message;
+}
+
+function getValues() {
   return {
     email: document.getElementById("email").value.trim(),
     password: document.getElementById("password").value
   };
 }
 
-function showError(error){
+function showError(error) {
   const messages = {
-    "auth/invalid-email":"Email address सही नहीं है।",
-    "auth/email-already-in-use":"यह email पहले से registered है। Login करें।",
-    "auth/weak-password":"पासवर्ड कम से कम 6 अक्षर का रखें।",
-    "auth/invalid-credential":"Email या password सही नहीं है।",
-    "auth/operation-not-allowed":"Firebase में Email/Password Login चालू करें।",
-    "auth/network-request-failed":"Internet connection जाँचें।"
+    "auth/invalid-email": "Email address सही नहीं है।",
+    "auth/invalid-credential": "Email या Password सही नहीं है।",
+    "auth/user-not-found": "यह अकाउंट नहीं मिला।",
+    "auth/wrong-password": "Password सही नहीं है।",
+    "auth/email-already-in-use": "यह Email पहले से रजिस्टर्ड है।",
+    "auth/weak-password": "Password कम से कम 6 अक्षर का रखें।",
+    "auth/operation-not-allowed": "Firebase में Email/Password Login चालू करें।",
+    "auth/network-request-failed": "Internet connection जाँचें।",
+    "auth/too-many-requests": "बहुत कोशिशें हुईं। कुछ देर बाद प्रयास करें।"
   };
-  message.textContent = messages[error.code] || ("Error: " + error.message);
+
+  message.textContent =
+    messages[error.code] || ("Error: " + error.code + " — " + error.message);
 }
 
-document.getElementById("register").onclick = async () => {
-  const v = values();
-  if(!v.email || v.password.length < 6){
-    message.textContent = "Email भरें और कम से कम 6 अक्षर का password रखें।";
-    return;
-  }
-  try{
-    await auth.createUserWithEmailAndPassword(v.email,v.password);
-    message.textContent = "Account बन गया और Login हो गया!";
-  }catch(e){showError(e);}
-};
+loginButton.addEventListener("click", async function () {
+  message.textContent = "Login की कोशिश हो रही है...";
 
-document.getElementById("login").onclick = async () => {
-  const v = values();
-  message.textContent = "Login button dabaya gaya";
-  if(!v.email || !v.password){
-    message.textContent = "Email और password भरें।";
+  if (!auth) {
+    message.textContent = "Firebase शुरू नहीं हुआ। सेटिंग जाँचें।";
     return;
   }
-  try{
-    await auth.signInWithEmailAndPassword(v.email,v.password);
+
+  const v = getValues();
+
+  if (!v.email || !v.password) {
+    message.textContent = "Email और Password दोनों भरें।";
+    return;
+  }
+
+  try {
+    await auth.signInWithEmailAndPassword(v.email, v.password);
     message.textContent = "Login सफल हुआ!";
-  }catch(e){showError(e);}
-};
+  } catch (error) {
+    showError(error);
+  }
+});
 
-document.getElementById("reset").onclick = async () => {
+registerButton.addEventListener("click", async function () {
+  message.textContent = "Account बनाया जा रहा है...";
+
+  if (!auth) {
+    message.textContent = "Firebase शुरू नहीं हुआ। सेटिंग जाँचें।";
+    return;
+  }
+
+  const v = getValues();
+
+  if (!v.email || v.password.length < 6) {
+    message.textContent = "Email भरें और Password कम से कम 6 अक्षर का रखें।";
+    return;
+  }
+
+  try {
+    await auth.createUserWithEmailAndPassword(v.email, v.password);
+    message.textContent = "Account बन गया और Login हो गया!";
+  } catch (error) {
+    showError(error);
+  }
+});
+
+resetButton.addEventListener("click", async function () {
+  if (!auth) {
+    message.textContent = "Firebase शुरू नहीं हुआ। सेटिंग जाँचें।";
+    return;
+  }
+
   const email = document.getElementById("email").value.trim();
-  if(!email){
+
+  if (!email) {
     message.textContent = "पहले Email address भरें।";
     return;
   }
-  try{
+
+  try {
     await auth.sendPasswordResetEmail(email);
-    message.textContent = "Password reset करने का email भेज दिया गया। Inbox देखें।";
-  }catch(e){showError(e);}
-};
-
-document.getElementById("logout").onclick = () => auth.signOut();
-
-auth.onAuthStateChanged(user => {
-  if(user){
-    message.textContent = "आप Login हैं: " + user.email;
-    document.getElementById("logout").style.display = "block";
-  }else{
-    document.getElementById("logout").style.display = "none";
+    message.textContent = "Password reset का Email भेज दिया गया है। Inbox देखें।";
+  } catch (error) {
+    showError(error);
   }
 });
+
+logoutButton.addEventListener("click", async function () {
+  try {
+    await auth.signOut();
+    message.textContent = "Logout हो गया।";
+  } catch (error) {
+    showError(error);
+  }
+});
+
+if (auth) {
+  auth.onAuthStateChanged(function (user) {
+    logoutButton.style.display = user ? "block" : "none";
+
+    if (user) {
+      message.textContent = "Login है: " + user.email;
+    }
+  });
+}
 </script>
 </body>
 </html>
