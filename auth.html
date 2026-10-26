@@ -78,6 +78,7 @@ document.getElementById("register").onclick = async () => {
 
 document.getElementById("login").onclick = async () => {
   const v = values();
+  message.textContent = "Login button dabaya gaya";
   if(!v.email || !v.password){
     message.textContent = "Email और password भरें।";
     return;
