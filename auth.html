@@ -91,13 +91,16 @@ button {
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
 
 <script>
-const firebaseConfi",= {
-  apiKey:AIzaSyCAriKxp6lKRJijQQ8-9syLXMiSZaPUfUc"
+const firebaseConfig = {
+  apiKey: "AIzaSyCAriKxp6lKRJijQQ8-9syLXMiSZaPUfUc",
   authDomain: "chudisho.firebaseapp.com",
+  databaseURL: "https://chudisho-default-rtdb.firebaseio.com",
   projectId: "chudisho",
+  storageBucket: "chudisho.firebasestorage.app",
   messagingSenderId: "659362680944",
   appId: "1:659362680944:web:36bc979e552043e4ba24b5"
 };
+
 
 const message = document.getElementById("message");
 const loginButton = document.getElementById("login");
