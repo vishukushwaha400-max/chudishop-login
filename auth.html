@@ -203,6 +203,7 @@ resetButton.addEventListener("click", async function () {
 
   try {
     await auth.sendPasswordResetEmail(email);
+    window.location.href = "https://vishukushwaha400-max.github.io/chudishop-login/success.html";
     message.textContent = "Password reset का Email भेज दिया गया है। Inbox देखें।";
   } catch (error) {
     showError(error);
@@ -225,6 +226,9 @@ if (auth) {
     if (user) {
       message.textContent = "Login है: " + user.email;
     }
+    if (window.AppInventor) {
+  window.AppInventor.setWebViewString("login_success");
+  }
   });
 }
 </script>
