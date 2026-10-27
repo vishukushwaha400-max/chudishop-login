@@ -160,6 +160,9 @@ loginButton.addEventListener("click", async function () {
   try {
     await auth.signInWithEmailAndPassword(v.email, v.password);
     message.textContent = "Login सफल हुआ!";
+   if (window.AppInventor) {
+  window.AppInventor.setWebViewString("login_success");
+    } 
   } catch (error) {
     showError(error);
   }
