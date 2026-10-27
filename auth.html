@@ -187,6 +187,7 @@ registerButton.addEventListener("click", async function () {
     showError(error);
   }
 });
+  
 
 resetButton.addEventListener("click", async function () {
   if (!auth) {
@@ -226,9 +227,7 @@ if (auth) {
     if (user) {
       message.textContent = "Login है: " + user.email;
     }
-    if (window.AppInventor) {
-  window.AppInventor.setWebViewString("login_success");
-  }
+    
   });
 }
 </script>
